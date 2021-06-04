@@ -7,6 +7,8 @@ import Signup from './routes/Signup'
 import Dashboard from './routes/Dashboard'
 import Login from './routes/Login'
 import theme from './theme'
+import {store} from './redux/store'
+import {Provider} from 'react-redux'
 
 function AppRoutes() {
   return (
@@ -33,11 +35,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <Router>
-      <ThemeProvider theme={theme}>
-        <AppRoutes />
-      </ThemeProvider>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <AppRoutes />
+        </ThemeProvider>
+      </Router>
+    </Provider>
   )
 }
 
