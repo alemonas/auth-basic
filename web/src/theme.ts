@@ -6,6 +6,14 @@ const theme: Theme | any = {
   styles: {
     ...tailwind.styles,
   },
+  alerts: {
+    success: {
+      bg: 'success',
+    },
+    error: {
+      bg: 'danger',
+    },
+  },
 }
 
 export default theme
