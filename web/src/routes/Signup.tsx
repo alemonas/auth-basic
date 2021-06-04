@@ -4,11 +4,12 @@ import {Heading, Container, Box, Button} from 'theme-ui'
 import Layout from '../components/Layout'
 import FormInput from '../components/common/FormInput'
 import Label from '../components/common/Label'
-import {publicFetch} from '../util/fetch'
 import FormSuccess from '../components/common/FormSuccess'
 import FormError from '../components/common/FormError'
 import {Fragment, useState} from 'react'
 import {Redirect} from 'react-router'
+import {signupUser, authSelector, clearState} from '../redux/authSlice'
+import {useAppDisptach, useAppSelector} from '../redux/hooks'
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required'),
@@ -26,7 +27,8 @@ function Signup() {
   async function submitCredentials(credentials: any) {
     try {
       setIsLoading(true)
-      const {data} = await publicFetch.post(`signup`, credentials)
+      // const {data} = await publicFetch.post(`signup`, credentials)
+      // const user = useAppDisptach(signupUser(credentials))
       setSignupSuccess(data.message)
       setSignupError('')
 
