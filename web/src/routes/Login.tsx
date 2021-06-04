@@ -1,6 +1,6 @@
 import * as Yup from 'yup'
 import {Formik, Form} from 'formik'
-import {Heading, Container, Box, Button, Spinner} from 'theme-ui'
+import {Heading, Container, Box, Button} from 'theme-ui'
 import Layout from '../components/Layout'
 import FormInput from '../components/common/FormInput'
 import Label from '../components/common/Label'
