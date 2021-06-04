@@ -1,7 +1,13 @@
 import * as Yup from 'yup'
-import {Formik, Form, Field} from 'formik'
-import {Heading, Container, Label, Input} from 'theme-ui'
+import {Formik, Form} from 'formik'
+import {Heading, Container, Box, Button} from 'theme-ui'
 import Layout from '../components/Layout'
+import FormInput from '../components/common/FormInput'
+import Label from '../components/common/Label'
+import {publicFetch} from '../util/fetch'
+import FormSuccess from '../components/common/FormSuccess'
+import FormError from '../components/common/FormError'
+import {useState} from 'react'
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required'),
@@ -18,17 +24,26 @@ const SignupSchema = Yup.object().shape({
 // }
 
 function Signup() {
-  // async function submitCredentials(credentials: any) {
-  //   try {
-  //     console.log(credentials)
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-  // }
+  const [signupSuccess, setSignupSuccess] = useState('')
+  const [signupError, setSignupError] = useState('')
+
+  async function submitCredentials(credentials: any) {
+    try {
+      console.log(credentials)
+      const {data} = await publicFetch.post(`signup`, credentials)
+      console.log({data})
+      setSignupSuccess(data.message)
+    } catch (err) {
+      console.log({err})
+      const {data} = err.response
+      setSignupError(data.message)
+    }
+  }
+
   return (
     <Layout>
-      <Heading>Signup</Heading>
-      <Container p={4} bg="muted">
+      <Heading sx={{textAlign: 'center'}}>Signup Page</Heading>
+      <Container p={4} bg="muted" mt={4}>
         <Formik
           initialValues={{
             firstName: '',
@@ -36,33 +51,49 @@ function Signup() {
             email: '',
             password: '',
           }}
-          // onSubmit={(values) => submitCredentials(values)}
-          onSubmit={(values) => {
-            console.log(values)
-          }}
+          onSubmit={(values) => submitCredentials(values)}
+          // onSubmit={(values) => {
+          //   console.log(values)
+          // }}
           validationSchema={SignupSchema}
         >
-          {({errors, touched}) => (
+          {() => (
             <Form>
-              <Field label="First Name" name="firstName" defaultValue="" />
-              {errors.firstName && touched.firstName ? (
-                <div>{errors.firstName}</div>
-              ) : null}
-              <Field label="Last Name" name="lastname" defaultValue="" />
-              {errors.lastName && touched.firstName ? (
-                <div>{errors.firstName}</div>
-              ) : null}
-              <Label htmlFor="email">Email</Label>
-              <Input name="email" id="email" mb={3} />
-              {errors.firstName && touched.firstName ? (
-                <div>{errors.firstName}</div>
-              ) : null}
-              <Label htmlFor="password">Password</Label>
-              <Input name="password" type="password" mb={3} />
-              {errors.firstName && touched.firstName ? (
-                <div>{errors.firstName}</div>
-              ) : null}
-              <button type="submit">submit</button>
+              {signupSuccess && (
+                <FormSuccess text={signupSuccess || 'success'} />
+              )}
+              {signupError && <FormError text={signupError || 'error'} />}
+              <Box>
+                <Label text="First Name" htmlFor="firstName" />
+                <FormInput
+                  ariaLabel="First Name"
+                  name="firstName"
+                  type="text"
+                />
+              </Box>
+              <Box>
+                <Label text="Last Name" htmlFor="lastName" />
+                <FormInput ariaLabel="Last Name" name="lastName" type="text" />
+              </Box>
+              <Box>
+                <Label text="Email address" htmlFor="email" />
+                <FormInput
+                  ariaLabel="Email address"
+                  name="email"
+                  type="email"
+                />
+              </Box>
+              <Box>
+                <Label text="password" htmlFor="password" />
+                <FormInput
+                  ariaLabel="Password"
+                  name="password"
+                  type="password"
+                />
+              </Box>
+              <Box mt={2}>
+                <Button type="submit">Register</Button>
+              </Box>
             </Form>
           )}
         </Formik>
