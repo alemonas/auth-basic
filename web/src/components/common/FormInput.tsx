@@ -7,7 +7,7 @@ interface FormInputProps {
   ariaLabel: string
   name: string
   type: string
-  placeholder: string
+  placeholder?: string
 }
 
 function FormInput({ariaLabel, name, type, placeholder}: FormInputProps) {
@@ -19,7 +19,7 @@ function FormInput({ariaLabel, name, type, placeholder}: FormInputProps) {
         ariaLabel={ariaLabel}
         name={name}
         type={type}
-        placeholder={placeholder}
+        placeholder={placeholder || ''}
       />
       {meta.touched && meta.error && <FormError text={meta.error} />}
     </React.Fragment>

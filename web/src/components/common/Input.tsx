@@ -1,3 +1,5 @@
+import {Input as MyInput} from 'theme-ui'
+
 interface InputProps {
   ariaLabel: string
   name: string
@@ -7,7 +9,7 @@ interface InputProps {
 }
 
 const Input = ({ariaLabel, name, type, placeholder, field}: InputProps) => (
-  <input
+  <MyInput
     {...field}
     arial-label={ariaLabel}
     name={name}
