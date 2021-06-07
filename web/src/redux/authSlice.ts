@@ -2,10 +2,16 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import {RootState} from './store'
 import {publicFetch} from '../util/fetch'
 
+enum Status {
+  IDLE = 'idle',
+  LOADING = 'loading',
+  FAILED = 'failed'
+}
+
 interface InitialState {
   isAuthenticated: boolean
   token: string
-  status: 'idle' | 'loading' | 'failed'
+  status: Status.IDLE | Status.LOADING | Status.FAILED
   userInfo: {
     firstName: string
     lastName: string
@@ -17,7 +23,7 @@ interface InitialState {
 const initialState: InitialState = {
   isAuthenticated: false,
   token: '',
-  status: 'idle',
+  status: Status.IDLE,
   userInfo: {
     firstName: '',
     lastName: '',
@@ -28,13 +34,14 @@ const initialState: InitialState = {
 
 export const signupUser = createAsyncThunk(
   'auth/signupUser',
-  async (credentials, thunkAPI) => {
+  async (credentials: any) => {
     try {
       const {data} = await publicFetch.post(`signup`, credentials)
       console.log({data})
       return data
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data)
+      // return thunkAPI.rejectWithValue(error.response.data)
+      return error.response.data
     }
   }
 )
@@ -45,15 +52,15 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(signupUser.fulfilled, (state, action) => {
-      state.status = 'idle'
+      state.status = Status.IDLE
       state.isAuthenticated = true
       state.token = JSON.stringify(action.payload)
     })
     builder.addCase(signupUser.pending, (state) => {
-      state.status = 'loading'
+      state.status = Status.LOADING
     })
     builder.addCase(signupUser.rejected, (state) => {
-      state.status = 'failed'
+      state.status = Status.FAILED
     })
   },
 })

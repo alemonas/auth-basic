@@ -8,7 +8,7 @@ import FormSuccess from '../components/common/FormSuccess'
 import FormError from '../components/common/FormError'
 import {Fragment, useState} from 'react'
 import {Redirect} from 'react-router'
-import {signupUser, authSelector, clearState} from '../redux/authSlice'
+import {signupUser, authSelector} from '../redux/authSlice'
 import {useAppDisptach, useAppSelector} from '../redux/hooks'
 
 const SignupSchema = Yup.object().shape({
@@ -23,18 +23,23 @@ function Signup() {
   const [signupError, setSignupError] = useState('')
   const [redirectOnLogin, setRedirectOnLogin] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useAppDisptach()
+  const data = useAppSelector(authSelector)
+  console.log({data})
 
   async function submitCredentials(credentials: any) {
     try {
       setIsLoading(true)
       // const {data} = await publicFetch.post(`signup`, credentials)
       // const user = useAppDisptach(signupUser(credentials))
-      setSignupSuccess(data.message)
+      dispatch(signupUser(credentials))
+      // console.log('dispatch data: ', data)
+      // setSignupSuccess(data.message)
       setSignupError('')
 
-      setTimeout(() => {
-        setRedirectOnLogin(true)
-      })
+      // setTimeout(() => {
+      //   setRedirectOnLogin(true)
+      // })
     } catch (err) {
       const {data} = err.response
       setSignupError(data.message)
