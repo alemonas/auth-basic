@@ -8,7 +8,7 @@ import FormSuccess from '../components/common/FormSuccess'
 import FormError from '../components/common/FormError'
 import {Fragment, useState} from 'react'
 import {Redirect} from 'react-router'
-import {signupUser, authSelector} from '../redux/authSlice'
+import {signup, authSelector, Status} from '../redux/authSlice'
 import {useAppDisptach, useAppSelector} from '../redux/hooks'
 
 const SignupSchema = Yup.object().shape({
@@ -19,34 +19,23 @@ const SignupSchema = Yup.object().shape({
 })
 
 function Signup() {
-  const [signupSuccess, setSignupSuccess] = useState('')
-  const [signupError, setSignupError] = useState('')
-  const [redirectOnLogin, setRedirectOnLogin] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const dispatch = useAppDisptach()
-  const data = useAppSelector(authSelector)
-  console.log({data})
+  const [redirectOnLogin, setRedirectOnLogin] = useState(false)
+  const {status, error} = useAppSelector(authSelector)
+  const isLoading = status === Status.PENDING
+  const isError = status === Status.REJECTED
+  const isSuccess = status === Status.RESOLVED
 
   async function submitCredentials(credentials: any) {
-    try {
-      setIsLoading(true)
-      // const {data} = await publicFetch.post(`signup`, credentials)
-      // const user = useAppDisptach(signupUser(credentials))
-      dispatch(signupUser(credentials))
-      // console.log('dispatch data: ', data)
-      // setSignupSuccess(data.message)
-      setSignupError('')
+    dispatch(signup(credentials))
+  }
 
-      // setTimeout(() => {
-      //   setRedirectOnLogin(true)
-      // })
-    } catch (err) {
-      const {data} = err.response
-      setSignupError(data.message)
-      setSignupSuccess('')
-    } finally {
-      setIsLoading(false)
-    }
+  console.log({isSuccess})
+
+  if (isSuccess) {
+    setTimeout(() => {
+      setRedirectOnLogin(true)
+    }, 1500)
   }
 
   return (
@@ -67,10 +56,8 @@ function Signup() {
           >
             {() => (
               <Form>
-                {signupSuccess && (
-                  <FormSuccess text={signupSuccess || 'success'} />
-                )}
-                {signupError && <FormError text={signupError || 'error'} />}
+                {isSuccess && <FormSuccess text="User Created!" />}
+                {isError && <FormError text={error || 'error'} />}
                 <Box>
                   <Label text="First Name" htmlFor="firstName" />
                   <FormInput

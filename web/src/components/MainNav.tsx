@@ -1,16 +1,17 @@
+import {Link} from 'react-router-dom'
 import {Flex, NavLink} from 'theme-ui'
 
 function MainNav() {
   return (
     <Flex as="nav">
       <NavLink href="#!" p={2}>
-        Home
+        <Link to="home">Home</Link>
       </NavLink>
       <NavLink href="#!" p={2}>
-        About us
+        <Link to="signup">Signup</Link>
       </NavLink>
       <NavLink href="#!" p={2}>
-        Sign Up
+        <Link to="dashboard">Dashboard</Link>
       </NavLink>
     </Flex>
   )

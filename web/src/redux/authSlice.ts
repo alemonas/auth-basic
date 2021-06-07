@@ -2,17 +2,24 @@ import {createSlice, createAsyncThunk} from '@reduxjs/toolkit'
 import {RootState} from './store'
 import {publicFetch} from '../util/fetch'
 
-enum Status {
+export enum Status {
   IDLE = 'idle',
-  LOADING = 'loading',
-  FAILED = 'failed'
+  PENDING = 'pending',
+  REJECTED = 'rejected',
+  RESOLVED = 'resolved',
 }
 
 interface InitialState {
   isAuthenticated: boolean
-  token: string
-  status: Status.IDLE | Status.LOADING | Status.FAILED
-  userInfo: {
+  status: Status.IDLE | Status.PENDING | Status.REJECTED | Status.RESOLVED
+  // isIdle: boolean
+  // isLoading: boolean
+  // isError: boolean
+  // isSuccess: boolean
+  token?: string | null
+  expiresAt?: string
+  error?: string | null
+  userInfo?: {
     firstName: string
     lastName: string
     email: string
@@ -22,26 +29,38 @@ interface InitialState {
 
 const initialState: InitialState = {
   isAuthenticated: false,
-  token: '',
+  // token: '',
   status: Status.IDLE,
-  userInfo: {
-    firstName: '',
-    lastName: '',
-    role: '',
-    email: '',
-  },
+  // isIdle: true,
+  // isLoading: false,
+  // isError: false,
+  // isSuccess: false,
+  // error: '',
+  // userInfo: {
+  //   firstName: '',
+  //   lastName: '',
+  //   role: '',
+  //   email: '',
+  // },
 }
 
-export const signupUser = createAsyncThunk(
-  'auth/signupUser',
-  async (credentials: any) => {
+export const signup = createAsyncThunk(
+  'auth/signup',
+  async (credentials: any, thunkAPI) => {
     try {
-      const {data} = await publicFetch.post(`signup`, credentials)
-      console.log({data})
+      const response = await publicFetch.post(`signup`, credentials)
+      const {data} = response
+
+      if (response.status !== 200) {
+        return thunkAPI.rejectWithValue(data)
+      }
+
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('userInfo', JSON.stringify(data.userInfo))
+      localStorage.setItem('expiresAt', data.expiresAt)
       return data
     } catch (error) {
-      // return thunkAPI.rejectWithValue(error.response.data)
-      return error.response.data
+      return thunkAPI.rejectWithValue(error.response.data)
     }
   }
 )
@@ -51,16 +70,25 @@ export const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(signupUser.fulfilled, (state, action) => {
-      state.status = Status.IDLE
+    builder.addCase(signup.fulfilled, (state, action) => {
+      state.status = Status.RESOLVED
       state.isAuthenticated = true
-      state.token = JSON.stringify(action.payload)
+      state.token = JSON.stringify(action.payload.token)
+      state.userInfo = action.payload.userInfo
+      state.expiresAt = action.payload.expiresAt
     })
-    builder.addCase(signupUser.pending, (state) => {
-      state.status = Status.LOADING
+    builder.addCase(signup.pending, (state) => {
+      state.status = Status.PENDING
     })
-    builder.addCase(signupUser.rejected, (state) => {
-      state.status = Status.FAILED
+    builder.addCase(signup.rejected, (state, {payload}: any) => {
+      return {
+        ...state,
+        status: Status.REJECTED,
+        error: payload.message,
+      }
+      // state.status = Status.REJECTED
+      // // state.isError = true
+      // state.error = payload.message
     })
   },
 })
