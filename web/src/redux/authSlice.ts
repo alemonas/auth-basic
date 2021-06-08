@@ -12,36 +12,20 @@ export enum Status {
 interface InitialState {
   isAuthenticated: boolean
   status: Status.IDLE | Status.PENDING | Status.REJECTED | Status.RESOLVED
-  // isIdle: boolean
-  // isLoading: boolean
-  // isError: boolean
-  // isSuccess: boolean
   token?: string | null
-  expiresAt?: string
+  expiresAt?: string | null
   error?: string | null
   userInfo?: {
     firstName: string
     lastName: string
     email: string
     role: string
-  }
+  } | null
 }
 
 const initialState: InitialState = {
   isAuthenticated: false,
-  // token: '',
   status: Status.IDLE,
-  // isIdle: true,
-  // isLoading: false,
-  // isError: false,
-  // isSuccess: false,
-  // error: '',
-  // userInfo: {
-  //   firstName: '',
-  //   lastName: '',
-  //   role: '',
-  //   email: '',
-  // },
 }
 
 export const signup = createAsyncThunk(
@@ -68,7 +52,15 @@ export const signup = createAsyncThunk(
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    clearState: (state) => {
+      state.token = null
+      state.isAuthenticated = false
+      state.status = Status.IDLE
+      state.userInfo = null
+      state.expiresAt = null
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(signup.fulfilled, (state, action) => {
       state.status = Status.RESOLVED
@@ -86,11 +78,10 @@ export const authSlice = createSlice({
         status: Status.REJECTED,
         error: payload.message,
       }
-      // state.status = Status.REJECTED
-      // // state.isError = true
-      // state.error = payload.message
     })
   },
 })
 
 export const authSelector = (state: RootState) => state.auth
+
+export const {clearState} = authSlice.actions
