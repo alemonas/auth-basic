@@ -11,8 +11,8 @@ const createToken = (user) => {
       sub: user._id,
       email: user.email,
       role: user.role,
-      iss: 'api.orbit',
-      aud: 'api.orbit',
+      iss: 'api.auth.basic',
+      aud: 'api.auth.basic',
     },
     process.env.JWT_SECRET,
     {
