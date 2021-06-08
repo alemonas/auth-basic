@@ -1,4 +1,5 @@
 /** @jsxImportSource theme-ui */
+import {Box, Container} from '@theme-ui/components'
 import React from 'react'
 import MainNav from './MainNav'
 
@@ -19,7 +20,6 @@ function Layout({children}: LayoutProps) {
         sx={{
           width: '100%',
           display: 'flex',
-          bg: 'seconday',
           color: 'primary',
           alignItems: 'center',
         }}
@@ -45,9 +45,14 @@ function Layout({children}: LayoutProps) {
       <footer
         sx={{
           width: '100%',
+          bg: 'grayDark',
+          color: 'white',
+          p: 2,
         }}
       >
-        Footer content
+        <Container>
+          <Box sx={{textAlign: 'center'}}>Footer content</Box>
+        </Container>
       </footer>
     </div>
   )
