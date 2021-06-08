@@ -2,9 +2,12 @@ import {Card, Heading, Text, Button} from 'theme-ui'
 import Layout from '../components/Layout'
 import {useState} from 'react'
 import {useHistory} from 'react-router-dom'
+import {useAppDisptach} from '../redux/hooks'
+import {clearState} from '../redux/authSlice'
 
 function Dashboard() {
   const history = useHistory()
+  const dispatch = useAppDisptach()
   const [userInfo] = useState(() => {
     const storedUserInfo = localStorage.getItem('userInfo')
     if (storedUserInfo) {
@@ -17,8 +20,11 @@ function Dashboard() {
     localStorage.removeItem('token')
     localStorage.removeItem('userInfo')
     localStorage.removeItem('expiresAt')
+    console.log('logout')
 
-    history.push('/login')
+    dispatch(clearState())
+
+    // history.push('/login')
   }
 
   return (
@@ -27,9 +33,9 @@ function Dashboard() {
       {userInfo && (
         <Card>
           <Text>Welcome {userInfo.firstName}</Text>{' '}
-          <Button onClick={handleLogout}>Logout</Button>
         </Card>
       )}
+      <Button onClick={handleLogout}>Logout</Button>
     </Layout>
   )
 }
