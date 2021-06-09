@@ -1,7 +1,7 @@
 /** @jsxImportSource theme-ui */
 import {Box, Container} from '@theme-ui/components'
 import React from 'react'
-import MainNav from './MainNav'
+import Navbar from './Navbar'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -24,7 +24,7 @@ function Layout({children}: LayoutProps) {
           alignItems: 'center',
         }}
       >
-        <MainNav />
+        <Navbar />
       </header>
       <main
         sx={{
