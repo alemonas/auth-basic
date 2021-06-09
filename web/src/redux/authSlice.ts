@@ -9,24 +9,47 @@ export enum Status {
   RESOLVED = 'resolved',
 }
 
+interface UserInfo {
+  firstName: string
+  lastName: string
+  email: string
+  role: string
+  bio?: string
+}
 interface InitialState {
   isAuthenticated: boolean
   status: Status.IDLE | Status.PENDING | Status.REJECTED | Status.RESOLVED
   token?: string | null
   expiresAt?: string | null
   error?: string | null
-  userInfo?: {
-    firstName: string
-    lastName: string
-    email: string
-    role: string
-  } | null
+  userInfo?: UserInfo | {}
 }
 
 const initialState: InitialState = {
   isAuthenticated: false,
   status: Status.IDLE,
 }
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async (loginCredentials: any, thunkAPI) => {
+    try {
+      const response = await publicFetch.post('authenticate', loginCredentials)
+      const {data} = response
+
+      if (response.status !== 200) {
+        return thunkAPI.rejectWithValue(data)
+      }
+
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('userInfo', JSON.stringify(data.userInfo))
+      localStorage.setItem('expiresAt', data.expiresAt)
+      return data
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data)
+    }
+  }
+)
 
 export const signup = createAsyncThunk(
   'auth/signup',
@@ -49,16 +72,31 @@ export const signup = createAsyncThunk(
   }
 )
 
+export const fetchAuthUser = createAsyncThunk('auth/fetchUser', async () => {
+  // try {
+  const token = localStorage.getItem('token') || null
+  const userInfo = localStorage.getItem('userInfo') || {}
+  const expiresAt = localStorage.getItem('expiresAt') || null
+
+  const isAuthenticated = token && expiresAt ? true : false
+
+  return {
+    isAuthenticated,
+    token,
+    userInfo,
+    expiresAt,
+  }
+  // } catch (error) {
+  // return 'fetchUser error'
+  // }
+})
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     clearState: (state) => {
-      state.token = null
-      state.isAuthenticated = false
-      state.status = Status.IDLE
-      state.userInfo = null
-      state.expiresAt = null
+      return initialState
     },
   },
   extraReducers: (builder) => {
@@ -78,6 +116,12 @@ export const authSlice = createSlice({
         status: Status.REJECTED,
         error: payload.message,
       }
+    })
+    builder.addCase(fetchAuthUser.fulfilled, (state, action) => {
+      state.isAuthenticated = action.payload.isAuthenticated
+      state.token = JSON.stringify(action.payload.token)
+      state.userInfo = action.payload.userInfo
+      state.expiresAt = action.payload.expiresAt
     })
   },
 })
