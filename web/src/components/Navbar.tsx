@@ -13,16 +13,20 @@ function Navbar() {
           Home
         </Link>
       </Flex>
-      <Box p={2}>
-        <Link sx={{variant: 'styles.a'}} to="signup">
-          Signup
-        </Link>
-      </Box>
-      <Box p={2}>
-        <Link sx={{variant: 'styles.a'}} to="login">
-          Login
-        </Link>
-      </Box>
+      {!isAuthenticated && (
+        <Box p={2}>
+          <Link sx={{variant: 'styles.a'}} to="signup">
+            Signup
+          </Link>
+        </Box>
+      )}
+      {!isAuthenticated && (
+        <Box p={2}>
+          <Link sx={{variant: 'styles.a'}} to="login">
+            Login
+          </Link>
+        </Box>
+      )}
       {isAuthenticated && (
         <Box p={2}>
           <Link sx={{variant: 'styles.a'}} to="dashboard">
