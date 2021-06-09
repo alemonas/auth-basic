@@ -1,10 +1,14 @@
-import {Heading} from 'theme-ui'
+import {Container, Heading} from 'theme-ui'
 import Layout from '../components/Layout'
 
 function Home() {
   return (
     <Layout>
-      <Heading>Home</Heading>
+      <Container>
+        <Heading as="h1" sx={{textAlign: 'center'}}>
+          Home Page
+        </Heading>
+      </Container>
     </Layout>
   )
 }
