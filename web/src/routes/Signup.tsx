@@ -30,8 +30,6 @@ function Signup() {
     dispatch(signup(credentials))
   }
 
-  console.log({isSuccess})
-
   if (isSuccess) {
     setTimeout(() => {
       setRedirectOnLogin(true)
