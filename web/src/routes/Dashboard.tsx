@@ -20,11 +20,10 @@ function Dashboard() {
     localStorage.removeItem('token')
     localStorage.removeItem('userInfo')
     localStorage.removeItem('expiresAt')
-    console.log('logout')
 
     dispatch(clearState())
 
-    // history.push('/login')
+    history.push('/login')
   }
 
   return (
@@ -33,9 +32,9 @@ function Dashboard() {
       {userInfo && (
         <Card>
           <Text>Welcome {userInfo.firstName}</Text>{' '}
+          <Button onClick={handleLogout}>Logout</Button>
         </Card>
       )}
-      <Button onClick={handleLogout}>Logout</Button>
     </Layout>
   )
 }
