@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react'
+import React, {Suspense, useEffect} from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import {ThemeProvider} from 'theme-ui'
 
@@ -9,8 +9,16 @@ import Login from './routes/Login'
 import theme from './theme'
 import {store} from './redux/store'
 import {Provider} from 'react-redux'
+import {useAppDisptach} from './redux/hooks'
+import {fetchAuthUser} from './redux/authSlice'
 
 function AppRoutes() {
+  const dispatch = useAppDisptach()
+
+  useEffect(() => {
+    dispatch(fetchAuthUser())
+  }, [dispatch])
+
   return (
     <>
       <Suspense fallback="loading...">
