@@ -1,11 +1,11 @@
 # TODO
 
-- [] Complete User Login Form.
-- [] Set auth state after login
-- [] Persist auth state on page refresh
-- [] Check if user is currently authenticated
+- [x] Complete User Login Form.
+- [x] Set auth state after login
+- [x] Persist auth state on page refresh
+- [x] Check if user is currently authenticated
 - [] Navigation conditionally based on auth state
-- [] Logout
+- [x] Logout
 - [] User's role
-- [] Conditionally display sidebar items
+- [] Conditionally display sidebar items based and content based on roles
 - [] Use JWT to fetch authenticated data from the server
