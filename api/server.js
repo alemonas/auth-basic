@@ -38,7 +38,7 @@ app.post('/api/authenticate', async (req, res) => {
       const token = createToken(userInfo)
 
       const decodedToken = jwtDecode(token)
-      const expiresAt = decodedToken.expiresAt
+      const expiresAt = decodedToken.exp
 
       res.json({
         message: 'autentication succesful!',
