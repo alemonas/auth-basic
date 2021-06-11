@@ -123,6 +123,24 @@ export const authSlice = createSlice({
       state.userInfo = action.payload.userInfo
       state.expiresAt = action.payload.expiresAt
     })
+
+    builder.addCase(login.fulfilled, (state, action) => {
+      state.status = Status.RESOLVED
+      state.isAuthenticated = true
+      state.token = JSON.stringify(action.payload.token)
+      state.userInfo = action.payload.userInfo
+      state.expiresAt = action.payload.expiresAt
+    })
+    builder.addCase(login.pending, (state) => {
+      state.status = Status.PENDING
+    })
+    builder.addCase(login.rejected, (state, {payload}: any) => {
+      return {
+        ...state,
+        status: Status.REJECTED,
+        error: payload.message,
+      }
+    })
   },
 })
 
