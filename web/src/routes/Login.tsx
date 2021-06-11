@@ -4,11 +4,12 @@ import {Heading, Container, Box, Button} from 'theme-ui'
 import Layout from '../components/Layout'
 import FormInput from '../components/common/FormInput'
 import Label from '../components/common/Label'
-import {publicFetch} from '../util/fetch'
 import FormSuccess from '../components/common/FormSuccess'
 import FormError from '../components/common/FormError'
 import {Fragment, useState} from 'react'
 import {Redirect} from 'react-router'
+import {useAppDisptach, useAppSelector} from '../redux/hooks'
+import {authSelector, login, Status} from '../redux/authSlice'
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Email is required'),
@@ -16,29 +17,22 @@ const LoginSchema = Yup.object().shape({
 })
 
 function Login() {
-  const [onSuccess, setOnSuccess] = useState('')
-  const [onError, setOnError] = useState('')
+  const dispatch = useAppDisptach()
+  const {status, error} = useAppSelector(authSelector)
+  const isLoading = status === Status.PENDING
+  const isError = status === Status.REJECTED
+  const isSuccess = status === Status.RESOLVED
   const [redirectOnLogin, setRedirectOnLogin] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
 
   async function submitCredentials(credentials: any) {
-    try {
-      setIsLoading(true)
-      const {data} = await publicFetch.post(`authenticate`, credentials)
-      setOnSuccess(data.message)
-      setOnError('')
-
-      setTimeout(() => {
-        setRedirectOnLogin(true)
-      })
-    } catch (err) {
-      const {data} = err.response
-      setOnError(data.message)
-      setOnSuccess('')
-    } finally {
-      setIsLoading(false)
-    }
+    dispatch(login(credentials))
   }
+
+  setTimeout(() => {
+    if (isSuccess) {
+      setRedirectOnLogin(true)
+    }
+  }, 2000)
 
   return (
     <Fragment>
@@ -56,8 +50,8 @@ function Login() {
           >
             {() => (
               <Form>
-                {onSuccess && <FormSuccess text={onSuccess || 'success'} />}
-                {onError && <FormError text={onError || 'error'} />}
+                {isSuccess && <FormSuccess text={'user logged in'} />}
+                {isError && <FormError text={error || 'error'} />}
                 <Box>
                   <Label text="Email address" htmlFor="email" />
                   <FormInput
