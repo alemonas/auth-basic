@@ -9,6 +9,11 @@ export enum Status {
   RESOLVED = 'resolved',
 }
 
+export enum UserRoles {
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
 interface UserInfo {
   firstName: string
   lastName: string
@@ -19,6 +24,7 @@ interface UserInfo {
 interface InitialState {
   isAuthenticated: boolean
   status: Status.IDLE | Status.PENDING | Status.REJECTED | Status.RESOLVED
+  isAdmin?: boolean
   token?: string | null
   expiresAt?: string | null
   error?: string | null
@@ -73,7 +79,6 @@ export const signup = createAsyncThunk(
 )
 
 export const fetchAuthUser = createAsyncThunk('auth/fetchUser', async () => {
-  // try {
   const token = localStorage.getItem('token') || null
   const userInfo = localStorage.getItem('userInfo') || {}
   const expiresAt = localStorage.getItem('expiresAt') || null
@@ -86,9 +91,6 @@ export const fetchAuthUser = createAsyncThunk('auth/fetchUser', async () => {
     userInfo,
     expiresAt,
   }
-  // } catch (error) {
-  // return 'fetchUser error'
-  // }
 })
 
 export const authSlice = createSlice({
@@ -101,10 +103,12 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(signup.fulfilled, (state, action) => {
+      const {userInfo} = action.payload
       state.status = Status.RESOLVED
       state.isAuthenticated = true
       state.token = JSON.stringify(action.payload.token)
-      state.userInfo = action.payload.userInfo
+      state.userInfo = userInfo
+      state.isAdmin = userInfo.role === UserRoles.ADMIN
       state.expiresAt = action.payload.expiresAt
     })
     builder.addCase(signup.pending, (state) => {
@@ -125,10 +129,12 @@ export const authSlice = createSlice({
     })
 
     builder.addCase(login.fulfilled, (state, action) => {
+      const {userInfo} = action.payload
       state.status = Status.RESOLVED
       state.isAuthenticated = true
       state.token = JSON.stringify(action.payload.token)
-      state.userInfo = action.payload.userInfo
+      state.userInfo = userInfo
+      state.isAdmin = userInfo.role === UserRoles.ADMIN
       state.expiresAt = action.payload.expiresAt
     })
     builder.addCase(login.pending, (state) => {
