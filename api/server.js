@@ -114,6 +114,27 @@ app.post('/api/signup', async (req, res) => {
   }
 })
 
+const requireAuth = jwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ['HS256'],
+  audience: 'api.auth.basic',
+  issuer: 'api.auth.basic',
+})
+
+app.get('/api/users', requireAuth, async (req, res) => {
+  try {
+    const users = await User.find().lean().select('_id firstName lastName bio')
+
+    return res.json({
+      users,
+    })
+  } catch (error) {
+    return res.status(400).json({
+      message: 'There was a problem getting the users.',
+    })
+  }
+})
+
 const attachUser = (req, res, next) => {
   const token = req.headers.authorization
   if (!token) {
