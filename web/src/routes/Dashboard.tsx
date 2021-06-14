@@ -2,12 +2,12 @@ import {Card, Heading, Text, Button} from 'theme-ui'
 import Layout from '../components/Layout'
 import {useState} from 'react'
 import {useHistory} from 'react-router-dom'
-import {useAppDisptach} from '../redux/hooks'
+import {useAppDispatch} from '../redux/hooks'
 import {clearState} from '../redux/authSlice'
 
 function Dashboard() {
   const history = useHistory()
-  const dispatch = useAppDisptach()
+  const dispatch = useAppDispatch()
   const [userInfo] = useState(() => {
     const storedUserInfo = localStorage.getItem('userInfo')
     if (storedUserInfo) {

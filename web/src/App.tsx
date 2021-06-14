@@ -15,7 +15,7 @@ import Users from './routes/Users'
 import theme from './theme'
 import {store} from './redux/store'
 import {Provider} from 'react-redux'
-import {useAppDisptach, useAppSelector} from './redux/hooks'
+import {useAppDispatch, useAppSelector} from './redux/hooks'
 import {authSelector, fetchAuthUser} from './redux/authSlice'
 
 interface AuthenticatedRouteProps {
@@ -37,7 +37,7 @@ function AuthenticatedRoute({children, ...rest}: AuthenticatedRouteProps) {
 }
 
 function AppRoutes() {
-  const dispatch = useAppDisptach()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     dispatch(fetchAuthUser())

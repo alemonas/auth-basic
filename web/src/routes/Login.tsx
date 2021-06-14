@@ -8,7 +8,7 @@ import FormSuccess from '../components/common/FormSuccess'
 import FormError from '../components/common/FormError'
 import {Fragment, useState} from 'react'
 import {Redirect} from 'react-router'
-import {useAppDisptach, useAppSelector} from '../redux/hooks'
+import {useAppDispatch, useAppSelector} from '../redux/hooks'
 import {authSelector, login, Status} from '../redux/authSlice'
 
 const LoginSchema = Yup.object().shape({
@@ -17,7 +17,7 @@ const LoginSchema = Yup.object().shape({
 })
 
 function Login() {
-  const dispatch = useAppDisptach()
+  const dispatch = useAppDispatch()
   const {status, error} = useAppSelector(authSelector)
   const isLoading = status === Status.PENDING
   const isError = status === Status.REJECTED

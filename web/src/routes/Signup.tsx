@@ -9,7 +9,7 @@ import FormError from '../components/common/FormError'
 import {Fragment, useState} from 'react'
 import {Redirect} from 'react-router'
 import {signup, authSelector, Status} from '../redux/authSlice'
-import {useAppDisptach, useAppSelector} from '../redux/hooks'
+import {useAppDispatch, useAppSelector} from '../redux/hooks'
 
 const SignupSchema = Yup.object().shape({
   firstName: Yup.string().required('First name is required'),
@@ -19,7 +19,7 @@ const SignupSchema = Yup.object().shape({
 })
 
 function Signup() {
-  const dispatch = useAppDisptach()
+  const dispatch = useAppDispatch()
   const [redirectOnLogin, setRedirectOnLogin] = useState(false)
   const {status, error} = useAppSelector(authSelector)
   const isLoading = status === Status.PENDING
