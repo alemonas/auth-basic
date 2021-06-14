@@ -1,35 +1,43 @@
 /** @jsxImportSource theme-ui */
 import {Link, useLocation} from 'react-router-dom'
 import {Flex, Box} from 'theme-ui'
-import {authSelector} from '../redux/authSlice'
+import {authSelector, UserRoles} from '../redux/authSlice'
 import {useAppSelector} from '../redux/hooks'
 
 interface NavItemTypes {
   label: string
   path: string
   allowedRoles: string[]
+  requiresAuthUser?: boolean
 }
 
 const navItems: NavItemTypes[] = [
   {
     label: 'Home',
     path: 'home',
-    allowedRoles: ['user'],
+    allowedRoles: ['user', 'admin'],
   },
   {
     label: 'Singup',
     path: 'signup',
-    allowedRoles: ['user'],
+    allowedRoles: ['user', 'admin'],
   },
   {
     label: 'login',
     path: 'login',
-    allowedRoles: ['user'],
+    allowedRoles: ['user', 'admin'],
   },
   {
     label: 'Dashboard',
     path: 'dashboard',
     allowedRoles: ['user', 'admin'],
+    requiresAuthUser: true,
+  },
+  {
+    label: 'Users',
+    path: 'users',
+    allowedRoles: ['admin'],
+    requiresAuthUser: true,
   },
 ]
 
@@ -43,7 +51,6 @@ interface NavItemContainerProps {
 
 const NavItem = ({navItem}: NavItemProps) => {
   const location = useLocation()
-  console.log({location})
   const isCurrentRoute = location.pathname === `/${navItem.path}`
   return (
     <Link
@@ -60,13 +67,22 @@ const NavItemContainer = ({children}: NavItemContainerProps) => (
 )
 
 function Navbar() {
-  // const {isAuthenticated} = useAppSelector(authSelector)
+  const {isAuthenticated, userInfo} = useAppSelector(authSelector)
+  const role = userInfo?.role || UserRoles.USER
+
   return (
     <Flex as="nav" sx={{justifyContent: 'center'}}>
       {navItems.map((navItem) => {
+        let authMiddleware = true
+        if (navItem.requiresAuthUser) {
+          authMiddleware = isAuthenticated
+        }
+
         return (
           <NavItemContainer key={navItem.path}>
-            <NavItem navItem={navItem} />
+            {navItem.allowedRoles.includes(role) && authMiddleware && (
+              <NavItem navItem={navItem} />
+            )}
           </NavItemContainer>
         )
       })}

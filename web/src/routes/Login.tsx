@@ -32,7 +32,7 @@ function Login() {
     if (isSuccess) {
       setRedirectOnLogin(true)
     }
-  }, 2000)
+  }, 200)
 
   return (
     <Fragment>

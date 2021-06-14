@@ -11,6 +11,7 @@ import Home from './routes/Home'
 import Signup from './routes/Signup'
 import Dashboard from './routes/Dashboard'
 import Login from './routes/Login'
+import Users from './routes/Users'
 import theme from './theme'
 import {store} from './redux/store'
 import {Provider} from 'react-redux'
@@ -24,6 +25,7 @@ interface AuthenticatedRouteProps {
 
 function AuthenticatedRoute({children, ...rest}: AuthenticatedRouteProps) {
   const {isAuthenticated} = useAppSelector(authSelector)
+  console.log({isAuthenticated})
   return (
     <Route
       {...rest}
@@ -54,6 +56,9 @@ function AppRoutes() {
           <Route path="/login">
             <Login />
           </Route>
+          <AuthenticatedRoute path="/users">
+            <Users />
+          </AuthenticatedRoute>
           <Route path="/">
             <Home />
           </Route>

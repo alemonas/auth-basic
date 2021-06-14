@@ -28,7 +28,7 @@ interface InitialState {
   token?: string | null
   expiresAt?: string | null
   error?: string | null
-  userInfo?: UserInfo | {}
+  userInfo?: UserInfo | null
 }
 
 const initialState: InitialState = {
@@ -80,15 +80,16 @@ export const signup = createAsyncThunk(
 
 export const fetchAuthUser = createAsyncThunk('auth/fetchUser', async () => {
   const token = localStorage.getItem('token') || null
-  const userInfo = localStorage.getItem('userInfo') || {}
+  const userInfo = localStorage.getItem('userInfo') || null
   const expiresAt = localStorage.getItem('expiresAt') || null
 
   const isAuthenticated = token && expiresAt ? true : false
+  console.log('fethAuthUser', isAuthenticated)
 
   return {
     isAuthenticated,
     token,
-    userInfo,
+    userInfo: userInfo ? JSON.parse(userInfo) : null,
     expiresAt,
   }
 })
