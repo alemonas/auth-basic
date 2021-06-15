@@ -18,14 +18,13 @@ import {Provider} from 'react-redux'
 import {useAppDispatch, useAppSelector} from './redux/hooks'
 import {authSelector, fetchAuthUser} from './redux/authSlice'
 
-interface AuthenticatedRouteProps {
+interface RouteProps {
   children: React.ReactNode
   path: string
 }
 
-function AuthenticatedRoute({children, ...rest}: AuthenticatedRouteProps) {
+function AuthenticatedRoute({children, ...rest}: RouteProps) {
   const {isAuthenticated} = useAppSelector(authSelector)
-  console.log({isAuthenticated})
   return (
     <Route
       {...rest}
@@ -36,34 +35,58 @@ function AuthenticatedRoute({children, ...rest}: AuthenticatedRouteProps) {
   )
 }
 
+function AdminRoute({children, ...rest}: RouteProps) {
+  const {isAdmin, isAuthenticated} = useAppSelector(authSelector)
+  console.log({isAdmin, isAuthenticated})
+  return (
+    <Route
+      {...rest}
+      render={() =>
+        isAuthenticated && isAdmin ? (
+          <div>{children}</div>
+        ) : (
+          <Redirect to="/home" />
+        )
+      }
+    />
+  )
+}
+
 function AppRoutes() {
   const dispatch = useAppDispatch()
+  const {fetchAuthUserCompleted} = useAppSelector(authSelector)
+  console.log({fetchAuthUserCompleted})
+  // console.log({authState})
 
   useEffect(() => {
     dispatch(fetchAuthUser())
+    // fetchAuthUserResponse.then((r) => console.log({r}))
+    // console.log({fetchAuthUserResponse})
   }, [dispatch])
 
   return (
     <>
-      <Suspense fallback="loading...">
-        <Switch>
-          <Route path="/signup">
-            <Signup />
-          </Route>
-          <AuthenticatedRoute path="/dashboard">
-            <Dashboard />
-          </AuthenticatedRoute>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <AuthenticatedRoute path="/users">
-            <Users />
-          </AuthenticatedRoute>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
-      </Suspense>
+      {fetchAuthUserCompleted && (
+        <Suspense fallback="loading...">
+          <Switch>
+            <Route path="/signup">
+              <Signup />
+            </Route>
+            <AuthenticatedRoute path="/dashboard">
+              <Dashboard />
+            </AuthenticatedRoute>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <AdminRoute path="/users">
+              <Users />
+            </AdminRoute>
+            <Route path="/">
+              <Home />
+            </Route>
+          </Switch>
+        </Suspense>
+      )}
     </>
   )
 }
