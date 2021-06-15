@@ -26,6 +26,7 @@ const navItems: NavItemTypes[] = [
     label: 'login',
     path: 'login',
     allowedRoles: ['user', 'admin'],
+    requiresAuthUser: false,
   },
   {
     label: 'Dashboard',
@@ -76,6 +77,9 @@ function Navbar() {
         let authMiddleware = true
         if (navItem.requiresAuthUser) {
           authMiddleware = isAuthenticated
+        }
+        if (!navItem.requiresAuthUser) {
+          authMiddleware = false
         }
 
         return (
