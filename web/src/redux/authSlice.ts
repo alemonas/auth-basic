@@ -29,11 +29,13 @@ interface InitialState {
   expiresAt?: string | null
   error?: string | null
   userInfo?: UserInfo | null
+  fetchAuthUserCompleted: boolean
 }
 
 const initialState: InitialState = {
   isAuthenticated: false,
   status: Status.IDLE,
+  fetchAuthUserCompleted: false,
 }
 
 export const login = createAsyncThunk(
@@ -84,7 +86,6 @@ export const fetchAuthUser = createAsyncThunk('auth/fetchUser', async () => {
   const expiresAt = localStorage.getItem('expiresAt') || null
 
   const isAuthenticated = token && expiresAt ? true : false
-  console.log('fethAuthUser', isAuthenticated)
 
   return {
     isAuthenticated,
@@ -127,6 +128,10 @@ export const authSlice = createSlice({
       state.token = JSON.stringify(action.payload.token)
       state.userInfo = action.payload.userInfo
       state.expiresAt = action.payload.expiresAt
+      state.fetchAuthUserCompleted = true
+    })
+    builder.addCase(fetchAuthUser.pending, (state) => {
+      state.fetchAuthUserCompleted = false
     })
 
     builder.addCase(login.fulfilled, (state, action) => {
