@@ -100,7 +100,10 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     clearState: (state) => {
-      return initialState
+      return {
+        ...initialState,
+        fetchAuthUserCompleted: true,
+      }
     },
   },
   extraReducers: (builder) => {
@@ -124,10 +127,12 @@ export const authSlice = createSlice({
       }
     })
     builder.addCase(fetchAuthUser.fulfilled, (state, action) => {
+      const {userInfo} = action.payload
       state.isAuthenticated = action.payload.isAuthenticated
       state.token = JSON.stringify(action.payload.token)
-      state.userInfo = action.payload.userInfo
       state.expiresAt = action.payload.expiresAt
+      state.userInfo = userInfo
+      state.isAdmin = userInfo.role === UserRoles.ADMIN
       state.fetchAuthUserCompleted = true
     })
     builder.addCase(fetchAuthUser.pending, (state) => {
