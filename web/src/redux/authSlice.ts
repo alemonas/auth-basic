@@ -132,7 +132,9 @@ export const authSlice = createSlice({
       state.token = JSON.stringify(action.payload.token)
       state.expiresAt = action.payload.expiresAt
       state.userInfo = userInfo
-      state.isAdmin = userInfo.role === UserRoles.ADMIN
+      if (userInfo?.role) {
+        state.isAdmin = userInfo.role === UserRoles.ADMIN
+      }
       state.fetchAuthUserCompleted = true
     })
     builder.addCase(fetchAuthUser.pending, (state) => {
