@@ -105,6 +105,12 @@ export const authSlice = createSlice({
         fetchAuthUserCompleted: true,
       }
     },
+    clearStatus: (state) => {
+      return {
+        ...state,
+        status: Status.IDLE,
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(signup.fulfilled, (state, action) => {
@@ -165,4 +171,4 @@ export const authSlice = createSlice({
 
 export const authSelector = (state: RootState) => state.auth
 
-export const {clearState} = authSlice.actions
+export const {clearState, clearStatus} = authSlice.actions

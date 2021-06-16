@@ -9,7 +9,7 @@ import FormError from '../components/common/FormError'
 import {Fragment, useState} from 'react'
 import {Redirect} from 'react-router'
 import {useAppDispatch, useAppSelector} from '../redux/hooks'
-import {authSelector, login, Status} from '../redux/authSlice'
+import {authSelector, clearStatus, login, Status} from '../redux/authSlice'
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email('Invalid email').required('Email is required'),
@@ -30,6 +30,7 @@ function Login() {
 
   setTimeout(() => {
     if (isSuccess) {
+      dispatch(clearStatus())
       setRedirectOnLogin(true)
     }
   }, 200)
