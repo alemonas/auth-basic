@@ -21,6 +21,7 @@ const navItems: NavItemTypes[] = [
     label: 'Singup',
     path: 'signup',
     allowedRoles: ['user', 'admin'],
+    requiresAuthUser: false,
   },
   {
     label: 'login',
@@ -74,20 +75,25 @@ function Navbar() {
   return (
     <Flex as="nav" sx={{justifyContent: 'center'}}>
       {navItems.map((navItem) => {
-        let authMiddleware = true
-        if (navItem.requiresAuthUser) {
-          authMiddleware = isAuthenticated
+        let authMiddleware = true // show all links by default
+        if (navItem.requiresAuthUser === true) {
+          authMiddleware = isAuthenticated // depends of isAuthenticated user
         }
-        if (!navItem.requiresAuthUser) {
-          authMiddleware = false
+        // for singup
+        // if (true && true ) {
+        //   authMiddleware = false
+        // }
+        if (navItem.requiresAuthUser === false && isAuthenticated) {
+          authMiddleware = false // doesn't show the link for authenticated users
         }
 
         return (
-          <NavItemContainer key={navItem.path}>
-            {navItem.allowedRoles.includes(role) && authMiddleware && (
+          navItem.allowedRoles.includes(role) &&
+          authMiddleware && (
+            <NavItemContainer key={navItem.path}>
               <NavItem navItem={navItem} />
-            )}
-          </NavItemContainer>
+            </NavItemContainer>
+          )
         )
       })}
     </Flex>
